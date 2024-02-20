@@ -4,6 +4,7 @@ import React, { useEffect, useState } from 'react';
 import Popup from 'reactjs-popup';
 import 'reactjs-popup/dist/index.css';
 import '@/app/globals.css';
+import ReactPaginate from "react-paginate";
 
 
 interface Post {
@@ -19,35 +20,37 @@ interface Comment {
   body: string;
 }
 
-function Page() {
+function Page() {      
   const [posts, setPosts] = useState<Post[]>([]);
   const [comments, setComments] = useState<Comment[]>([]);
-  const [currentPage, setCurrentPage] = useState(1);
-const [loading, setLoading] = useState(true); 
+  const [currentPage, setCurrentPage] = useState();
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await fetch('https://jsonplaceholder.typicode.com/posts');
+  useEffect(() => {    
+    const fetchData = async () => {           
+     
+        const response = await fetch(`https://jsonplaceholder.typicode.com/posts?_page=${currentPage}&_limit=10`);
         const postData = await response.json();
+        console.log(postData);
         setPosts(postData);
-
-        if (postData.length > 0) {
-          const response2 = await fetch(`https://jsonplaceholder.typicode.com/posts/${postData[0].id}/comments`);
-          const commentData = await response2.json();
-          setComments(commentData);
-        }
-      } catch (error) {
-        console.error('Error fetching data:', error);
-      }
+ 
+       const response2 = await fetch(`https://jsonplaceholder.typicode.com/posts/${postData[0].id}/comments`);
+       const commentData = await response2.json();
+       setComments(commentData);
+       
     };
 
     fetchData();
   }, [currentPage]);
 
+  const handlePageClick = async (pageNum:any) => {   
+    console.log("page"+pageNum);
+    const Page = pageNum.selected + 1;    
+    setCurrentPage(Page);     
+  }                                
+      
   return (
     <div className="container">
-      <div className="col align-self-center">
+      <div className="col align-self-center"> 
         {posts.map((post: Post) => (
           <Popup
             key={post.id}
@@ -72,11 +75,23 @@ const [loading, setLoading] = useState(true);
               ))}
             </div>
           </Popup>
+          
         ))}
-         <div className='pagination d-flex justify-content-center mt-4'>
-            <button className='btn btn-secondary me-2' onClick={() => setCurrentPage(prevPage => prevPage - 1)} disabled={currentPage === 1}>Previous</button>
-            <button className='btn btn-secondary' onClick={() => setCurrentPage(prevPage => prevPage + 1)} disabled={currentPage === 10}>Next</button>
-          </div>
+         <div >
+          <ReactPaginate
+            previousLabel="Previous"
+            nextLabel="Next"
+            breakLabel="..."
+            pageCount={10}
+            marginPagesDisplayed={3}
+            pageRangeDisplayed={5}
+            onPageChange={handlePageClick}
+            renderOnZeroPageCount={null}
+            containerClassName={'pagination justify-content-center'}
+            pageClassName={'page-item'}
+            pageLinkClassName={'page-link'}
+          />
+        </div>
         </div>
       </div>
   );

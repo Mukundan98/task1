@@ -101,28 +101,29 @@ img{
 }
 
 .comments {
-  border: 1px solid #ccc;
+  border: 2px solid #040404;
   padding: 10px;
   margin-bottom: 10px;
+  background-color: #5d5d5c;
 }
 
 
 .comments h1 {
   margin: 0;
   font-size: 18px;
-  color: #333;
+  color: #1a0101;
 }
 
 
 .comments h1:nth-of-type(2) {
   margin-top: 5px;
   font-size: 16px;
-  color: #666;
+  color: #f7f6f6ec;
 }
 
 
 .comments p {
   margin-top: 10px;
   font-size: 16px;
-  color: #555;
+  color: #fffafa;
 }
